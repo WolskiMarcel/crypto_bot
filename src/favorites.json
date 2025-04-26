@@ -1,0 +1,22 @@
+{
+  "691768838814957668": [
+    {
+      "type": "price",
+      "symbol": "BTC",
+      "currency": "USD",
+      "fiat_conversion": false
+    },
+    {
+      "type": "price",
+      "symbol": "BTC",
+      "currency": "PLN",
+      "fiat_conversion": false
+    },
+    {
+      "type": "price",
+      "symbol": "PLN",
+      "currency": "USD",
+      "fiat_conversion": true
+    }
+  ]
+}
