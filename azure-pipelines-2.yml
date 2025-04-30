@@ -1,7 +1,7 @@
 trigger: none
 
 pool:
-  name: 'agenttokenbot'
+  name: 'crc-cryptobot'
 
 jobs:
 - job: TestAgent
