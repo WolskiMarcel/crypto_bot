@@ -1,0 +1,13 @@
+trigger: none
+
+pool:
+  name: 'agenttokenbot'
+
+jobs:
+- job: TestAgent
+  displayName: "Test działania self-hosted agenta"
+  steps:
+  - script: |
+      echo "Witaj, self-hosted agent działa!"
+      hostname
+    displayName: "Wyświetlenie informacji o agencie"
