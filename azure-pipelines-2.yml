@@ -9,5 +9,4 @@ jobs:
   steps:
   - script: |
       echo "Witaj, self-hosted agent działa!"
-      hostname
     displayName: "Wyświetlenie informacji o agencie"
