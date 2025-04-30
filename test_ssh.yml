@@ -1,0 +1,17 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: TestSSHConnection
+  displayName: "Test połączenia SSH do VM"
+  steps:
+  - task: SSH@0
+    displayName: "Wykonanie polecenia 'uname -a'"
+    inputs:
+      sshEndpoint: 'AzureVMConnection'  # Upewnij się, że nazwa Service Connection jest poprawna
+      runOptions: 'commands'
+      command: |
+        echo "Test połączenia SSH: Połączenie działa!"
+        uname -a

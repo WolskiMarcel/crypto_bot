@@ -14,8 +14,8 @@
     },
     {
       "type": "price",
-      "symbol": "PLN",
-      "currency": "USD",
+      "symbol": "USD",
+      "currency": "PLN",
       "fiat_conversion": true
     }
   ]
