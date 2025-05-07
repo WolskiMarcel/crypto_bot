@@ -34,7 +34,7 @@ CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API B
 
    ```bash
    git clone https://github.com/WolskiMarcel/crypto_bot.git
-   cd crc-crypto_bot
+   cd crypto_bot
    ```
 
 2. **Utworzenie i aktywacja wirtualnego środowiska**
@@ -164,6 +164,44 @@ spec:
 ```
 
 ## CI/CD – Azure Pipelines
+
+Ze względu na brak przyznanej równoległości od Azure DevOps dla hostowanych agentów, zdecydowano o ręcznym wdrożeniu 
+self-hosted agenta na maszynie wirtualnej (VM) w Azure. Aby zapewnić jego automatyczne działanie po restarcie maszyny, 
+skonfigurowano usługę systemową (systemctl). Dzięki temu agent startuje samoistnie przy każdym uruchomieniu VM, 
+umożliwiając stabilne i niezależne wykonywanie pipeline’ów CI/CD bez konieczności ręcznego uruchamiania procesu.
+
+Utworzenie pliku usługi systemowej:
+```bash
+  sudo vim /etc/systemd/system/azure-agent.service
+```
+Dodajemy następującą konfigurację:
+```yaml
+[Unit]
+Description=Azure DevOps Self-hosted Agent
+After=network.target
+
+[Service]
+User=azureuser  # Użytkownik na VM, który uruchamia agenta
+WorkingDirectory=/home/azureuser/myagent  # Ścieżka do katalogu agenta
+ExecStart=/home/azureuser/myagent/run.sh
+Restart=always
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
+```
+Należy załadować nową usługę i ją uruchomić.
+
+```bash
+    sudo systemctl daemon-reload
+    sudo systemctl start azure-agent
+    sudo systemctl status azure-agent
+```
+Aby agent automatyczne uruchamiał się po restarcie VM:
+
+```bash
+    sudo systemctl enable azure-agent
+```
 
 Przykładowy pipeline Azure definiuje etapy:
 - **Tests:** Tworzenie wirtualnego środowiska, instalacja zależności, uruchomienie testów i sprawdzenie kodu przy użyciu Black.
