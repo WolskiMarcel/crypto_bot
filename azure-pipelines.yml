@@ -58,6 +58,7 @@ stages:
       steps:
         - checkout: self
         - script: |
+            # Przekonwertuj nazwę obrazu na lowercase
             IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
             echo "Using image tag: $IMAGE_TAG:latest"
             docker build -t ${IMAGE_TAG}:latest -f src/Dockerfile src/
@@ -66,8 +67,10 @@ stages:
             docker login $(registryName) -u $(acrUsername) -p $(acrPassword)
           displayName: "Logowanie do rejestru Docker"
         - script: |
-            docker push $(registryName)/$(Build.Repository.Name):latest
-          displayName: "Wysyłanie obrazu do rejestru"
+            IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
+            echo "Pushing image: ${IMAGE_TAG}:latest"
+            docker push ${IMAGE_TAG}:latest
+          displayName: "Push Docker Image"
 
 - stage: Deploy
   displayName: "Deployment"
