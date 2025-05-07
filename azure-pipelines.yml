@@ -49,7 +49,7 @@ stages:
           displayName: "Run tests (pytest)"
 
 - stage: Build
-  displayName: "Budowanie obrazu Docker"
+  displayName: "Building Docker Image"
   dependsOn: Test
   condition: and(succeeded(), eq('${{ parameters.buildImage }}', true))
   jobs:
@@ -58,7 +58,9 @@ stages:
       steps:
         - checkout: self
         - script: |
-            docker build -t $(registryName)/$(Build.Repository.Name):latest -f src/Dockerfile src/
+            IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
+            echo "Using image tag: $IMAGE_TAG:latest"
+            docker build -t ${IMAGE_TAG}:latest -f src/Dockerfile src/
           displayName: "Budowanie obrazu Docker"
         - script: |
             docker login $(registryName) -u $(acrUsername) -p $(acrPassword)
