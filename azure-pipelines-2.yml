@@ -1,7 +1,7 @@
 trigger: none
 
 pool:
-  name: 'crc-cryptobot'
+  name: 'vm-agent'
 
 jobs:
 - job: TestAgent
@@ -9,4 +9,5 @@ jobs:
   steps:
   - script: |
       echo "Witaj, self-hosted agent działa!"
+      hostname
     displayName: "Wyświetlenie informacji o agencie"
