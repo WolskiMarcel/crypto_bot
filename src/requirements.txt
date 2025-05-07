@@ -1,7 +1,5 @@
 discord.py
 requests
 matplotlib
-
 pytest
-
 black
