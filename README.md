@@ -1,23 +1,42 @@
-# 🚀 CRC CryptoBot
+# 🚀 *CRC CryptoBot*
 
-CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API Binance i Frankfurter oferując szereg komend pomocnych w codziennych finansach. Dodatkowo z opcjami dodawania do ulubionych i to w dwóch językach.
+Kurs z ramach programu *Corporate Readiness Certificate* od *ING HUBS POLAND* - *Kod na produkcji - od pisania
+do wdrożenia oprogramowania*.
+
+CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się 
+z [Binance API](https://binance-docs.github.io/apidocs/spot/en/) 
+oraz [Frankfurter API](https://www.frankfurter.app/docs), 
+oferując szereg komend przydatnych w codziennych finansach. Dodatkowo bot umożliwia dodawanie ulubionych wpisów i 
+obsługuje dwujęzyczność!
 
 ## Funkcje
 
+
 - **Generowanie wykresów:**  
-  Komenda `!wykres` umożliwia generowanie wykresów na podstawie wybranych symboli (np. BTC, ETH) i okresów.
-  
+  **Opis:** Komenda `!wykres` pozwala na generowanie wykresów na podstawie wybranych symboli kryptowalut (np. BTC, ETH) oraz określonych przedziałów czasowych.  
+  **Przykład użycia:**  
+  - `!wykres BTC 1d` – generuje wykres dzienny dla Bitcoina.  
+  **Technologia:** Wykresy tworzone są przy użyciu biblioteki matplotlib na podstawie danych pobieranych z Binance API.
+
+
 - **Wyświetlanie cen:**  
-  Komenda `!price` pokazuje aktualną cenę kryptowaluty w wybranej walucie.
-  
+  **Opis:** Komenda `!price` wyświetla aktualną cenę wybranej kryptowaluty w określonej walucie.  
+  **Przykład użycia:**  
+  - `!price ETH USD` – pokazuje aktualną cenę Ethereum w dolarach amerykańskich.  
+  **Technologia:** Aktualne dane są pobierane bezpośrednio z Binance API.
+
+
 - **Obsługa ulubionych:**  
-  Dodaj ulubione wpisy za pomocą reakcji ❤️ – ulubione są zapisywane i później wyświetlane przez komendę `!ulubione`.
+  **Opis:** Użytkownik może dodać wpis do ulubionych reagując reakcją ❤️. Ulubione wpisy są zapisywane i później wyświetlane za pomocą komendy `!ulubione`.
+
 
 - **Zmiana języka:**  
-  Komenda `!lang` lub `!jezyk` pozwala ustawiać preferowany język (np. `!lang pl`).
+  **Opis:** Komenda `!lang` lub `!jezyk` pozwala na ustawienie preferowanego języka (np. `!lang pl` dla polskiego lub `!lang en` dla angielskiego).  
+  **Cel:** Ułatwienie korzystania z bota użytkownikom z różnych regionów.
 
-- **Konfiguracja walut:**  
-  Komenda `!waluta` umożliwia ustawienie preferowanej waluty.
+
+- **Konfiguracja waluty:**  
+  **Opis:** Komenda `!waluta` umożliwia ustawienie preferowanej waluty, w której bot przedstawia ceny kryptowalut, co jest szczególnie przydatne przy międzynarodowym użyciu.
 
 ## Wymagania
 
@@ -25,7 +44,7 @@ CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API B
 - [discord.py](https://pypi.org/project/discord.py/)
 - [requests](https://pypi.org/project/requests/)
 - [matplotlib](https://pypi.org/project/matplotlib/)
-- Inne narzędzia do testów: pytest
+- Narzędzia do testów: pytest, black
 
 ## Instalacja i Uruchomienie
 
@@ -60,7 +79,6 @@ CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API B
 
    ```bash
    export BOT_TOKEN="twoj_token"
-   export NASA_API_KEY="twoj_klucz_api"
    ```
 
 5. **Uruchomienie bota**
@@ -129,7 +147,7 @@ CMD [ "python", "app.py" ]
 
 ## CI/CD – Azure Pipelines
 
-Ze względu na brak przyznanej równoległości od Azure DevOps dla hostowanych agentów, zdecydowano o ręcznym wdrożeniu 
+Ze względu na ograniczoną równoległość na hostowanych agentach Azure DevOps, zdecydowano o ręcznym wdrożeniu 
 self-hosted agenta na maszynie wirtualnej (VM) w Azure. Aby zapewnić jego automatyczne działanie po restarcie maszyny, 
 skonfigurowano usługę systemową (systemctl). Dzięki temu agent startuje samoistnie przy każdym uruchomieniu VM, 
 umożliwiając stabilne i niezależne wykonywanie pipeline’ów CI/CD bez konieczności ręcznego uruchamiania procesu.
