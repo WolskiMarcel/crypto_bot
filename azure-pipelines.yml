@@ -40,10 +40,12 @@ stages:
             pip install -r src/requirements.txt
           displayName: "Install dependencies"
         - script: |
+            source venv/bin/activate
             black --check src
           displayName: "Run Black code style check"
         - script: |
-            pytest
+            source venv/bin/activate
+            pytest tests
           displayName: "Run tests (pytest)"
 
 - stage: Build
