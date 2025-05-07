@@ -81,16 +81,19 @@ stages:
       displayName: "Wdrożenie aplikacji"
       steps:
         - script: |
+            # Konwersja nazwy obrazu na lowercase
+            IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
+            echo "Using image tag: ${IMAGE_TAG}:latest"
             echo "Wybrana operacja: ${{ parameters.operation }}"
             if [ "${{ parameters.operation }}" = "Install" ]; then
               echo "Instalowanie – uruchamiamy kontener..."
-              docker run -d -e D_TOKEN="$(d_token)" -p 32025:32025 $(registryName)/$(Build.Repository.Name):latest
+              docker run -d -e D_TOKEN="$(d_token)" -p 32025:32025 ${IMAGE_TAG}:latest
             elif [ "${{ parameters.operation }}" = "Uninstall" ]; then
               echo "Uninstall – zatrzymujemy i usuwamy kontener..."
               docker stop myapp || true && docker rm myapp || true
             else
               echo "Reinstall – zatrzymujemy, usuwamy i uruchamiamy nowy kontener..."
               docker stop myapp || true && docker rm myapp || true
-              docker run -d --name myapp -e D_TOKEN="$(d_token)" -p 32025:32025 $(registryName)/$(Build.Repository.Name):latest
+              docker run -d --name myapp -e D_TOKEN="$(d_token)" -p 32025:32025 ${IMAGE_TAG}:latest
             fi
           displayName: "Wdrożenie aplikacji"
