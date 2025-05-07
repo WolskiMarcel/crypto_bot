@@ -2,10 +2,12 @@ import unittest
 from unittest.mock import patch, Mock
 from src.app import price, user_currency, message_fav_data
 
+
 # Fake classes for simulating Discord context
 class FakeAuthor:
     def __init__(self, id):
         self.id = id
+
 
 # Class simulating a message returned by ctx.send.
 class FakeMessage:
@@ -28,6 +30,7 @@ class FakeContext:
         msg = FakeMessage(message)
         self.sent_messages.append(message)
         return msg
+
 
 class TestPriceCommand(unittest.IsolatedAsyncioTestCase):
     @patch("src.app.requests.get")
@@ -75,5 +78,6 @@ class TestPriceCommand(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(fav_entry["currency"], "PLN")
         self.assertEqual(fav_entry["fiat_conversion"], True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

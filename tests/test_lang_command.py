@@ -1,10 +1,12 @@
 import unittest
 from src.app import lang, user_lang, t
 
+
 # Fake classes for simulating Discord context
 class FakeAuthor:
     def __init__(self, id):
         self.id = id
+
 
 class FakeContext:
     def __init__(self, author_id):
@@ -13,6 +15,7 @@ class FakeContext:
 
     async def send(self, message):
         self.sent_messages.append(message)
+
 
 class TestLangCommand(unittest.IsolatedAsyncioTestCase):
 
@@ -27,10 +30,13 @@ class TestLangCommand(unittest.IsolatedAsyncioTestCase):
         # Call the command without an argument
         await lang(ctx)
         # Expected message – the t() function will return the version for the default "en"
-        expected = t(ctx.author.id, {
-            "en": "Please enter `!jezyk en/pl` or `!lang en/pl`.",
-            "pl": "Wpisz `!jezyk en/pl` albo `!lang en/pl`"
-        })
+        expected = t(
+            ctx.author.id,
+            {
+                "en": "Please enter `!jezyk en/pl` or `!lang en/pl`.",
+                "pl": "Wpisz `!jezyk en/pl` albo `!lang en/pl`",
+            },
+        )
         self.assertIn(expected, ctx.sent_messages)
 
     async def test_lang_set_to_pl(self):
@@ -46,5 +52,6 @@ class TestLangCommand(unittest.IsolatedAsyncioTestCase):
         self.assertIn(expected, ctx.sent_messages)
         self.assertEqual(user_lang[ctx.author.id], "pl")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

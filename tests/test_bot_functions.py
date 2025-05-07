@@ -1,6 +1,7 @@
 import unittest
 from src.app import parse_chart_args
 
+
 class TestBotFunctions(unittest.TestCase):
     def test_parse_chart_args_single_argument(self):
         """
@@ -14,7 +15,7 @@ class TestBotFunctions(unittest.TestCase):
             "target": "USDT",
             "days": 30,
             "interval": "1d",
-            "kolor": "royalblue"
+            "kolor": "royalblue",
         }
         result = parse_chart_args(args)
         self.assertEqual(result, expected)
@@ -30,10 +31,11 @@ class TestBotFunctions(unittest.TestCase):
             "target": "USDT",
             "days": 7,
             "interval": "1d",
-            "kolor": "royalblue"
+            "kolor": "royalblue",
         }
         result = parse_chart_args(args)
         self.assertEqual(result, expected)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

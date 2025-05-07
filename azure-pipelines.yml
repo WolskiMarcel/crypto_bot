@@ -40,7 +40,7 @@ stages:
             pip install -r src/requirements.txt
           displayName: "Install dependencies"
         - script: |
-            black --check .
+            black --check src
           displayName: "Run Black code style check"
         - script: |
             pytest
