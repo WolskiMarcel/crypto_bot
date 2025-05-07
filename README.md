@@ -1,5 +1,4 @@
-
-# CRC-CryptoBot
+# 🚀 CRC CryptoBot
 
 CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API Binance i Frankfurter oferując szereg komend pomocnych w codziennych finansach. Dodatkowo z opcjami dodawania do ulubionych i to w dwóch językach.
 
