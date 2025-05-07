@@ -1,29 +1,92 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
-- main
+  branches:
+    include:
+      - main
 
-resources:
-- repo: self
+parameters:
+  - name: buildImage
+    type: boolean
+    default: true
+    displayName: "Build Docker Image"
+  - name: operation
+    type: string
+    default: "Reinstall"
+    displayName: "Options"
+    values:
+      - Install
+      - Uninstall
+      - Reinstall
+
+pool:
+  name: 'vm-agent'
 
 variables:
-  tag: '$(Build.BuildId)'
+- group: credentials  # Grupa zmiennych zawierająca m.in. registryName, d_token, acrUsername, acrPassword, itp.
+- name: repo_github
+  value: 'https://github.com/WolskiMarcel/crypto_bot'
 
 stages:
-- stage: Build
-  displayName: Build image
+- stage: Test
+  displayName: "Test i Linter"
   jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/src/Dockerfile'
-        tags: |
-          $(tag)
+    - job: Testing
+      displayName: "Run tests and code formatting checks"
+      steps:
+        - checkout: self
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.13'
+          displayName: "Setting env Python 3.13"
+        - script: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pytest black
+          displayName: "Instalacja zależności"
+        - script: |
+            black --check .
+          displayName: "Run Black code style check"
+        - script: |
+            pytest
+          displayName: "Run tests (pytest)"
+
+- stage: Build
+  displayName: "Budowanie obrazu Docker"
+  dependsOn: Test
+  condition: and(succeeded(), eq('${{ parameters.buildImage }}', true))
+  jobs:
+    - job: BuildJob
+      displayName: "Budowanie obrazu i wysłanie do ACR"
+      steps:
+        - checkout: self
+        - script: |
+            docker build -t $(registryName)/$(Build.Repository.Name):latest -f src/Dockerfile src/
+          displayName: "Budowanie obrazu Docker"
+        - script: |
+            docker login $(registryName) -u $(acrUsername) -p $(acrPassword)
+          displayName: "Logowanie do rejestru Docker"
+        - script: |
+            docker push $(registryName)/$(Build.Repository.Name):latest
+          displayName: "Wysyłanie obrazu do rejestru"
+
+- stage: Deploy
+  displayName: "Deployment"
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - job: DeployJob
+      displayName: "Wdrożenie aplikacji"
+      steps:
+        - script: |
+            echo "Wybrana operacja: ${{ parameters.operation }}"
+            if [ "${{ parameters.operation }}" = "Install" ]; then
+              echo "Instalowanie – uruchamiamy kontener..."
+              docker run -d -e D_TOKEN="$(d_token)" -p 32025:32025 $(registryName)/$(Build.Repository.Name):latest
+            elif [ "${{ parameters.operation }}" = "Uninstall" ]; then
+              echo "Uninstall – zatrzymujemy i usuwamy kontener..."
+              docker stop myapp || true && docker rm myapp || true
+            else
+              echo "Reinstall – zatrzymujemy, usuwamy i uruchamiamy nowy kontener..."
+              docker stop myapp || true && docker rm myapp || true
+              docker run -d --name myapp -e D_TOKEN="$(d_token)" -p 32025:32025 $(registryName)/$(Build.Repository.Name):latest
+            fi
+          displayName: "Wdrożenie aplikacji"
