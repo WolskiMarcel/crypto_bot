@@ -11,7 +11,7 @@ parameters:
   - name: operation
     type: string
     default: "Reinstall"
-    displayName: "Options"
+    displayName: "Operation"
     values:
       - Install
       - Uninstall
@@ -21,16 +21,16 @@ pool:
   name: 'vm-agent'
 
 variables:
-- group: credentials  # Grupa zmiennych zawierająca m.in. registryName, d_token, acrUsername, acrPassword, itp.
+- group: credentials  # Variable group containing registryName, d_token, acrUsername, acrPassword, etc.
 - name: repo_github
   value: 'https://github.com/WolskiMarcel/crypto_bot'
 
 stages:
 - stage: Test
-  displayName: "Test i Linter"
+  displayName: "Testing and Linting"
   jobs:
     - job: Testing
-      displayName: "Run tests and code formatting checks"
+      displayName: "Run tests and code style checks"
       steps:
         - checkout: self
         - script: |
@@ -38,15 +38,15 @@ stages:
             source venv/bin/activate
             python -m pip install --upgrade pip
             pip install -r src/requirements.txt
-          displayName: "Install dependencies"
+          displayName: "Install Dependencies"
         - script: |
             source venv/bin/activate
             black --check src
-          displayName: "Run Black code style check"
+          displayName: "Run Black Code Style Check"
         - script: |
             source venv/bin/activate
             pytest tests
-          displayName: "Run tests (pytest)"
+          displayName: "Run Pytest"
 
 - stage: Build
   displayName: "Building Docker Image"
@@ -54,18 +54,18 @@ stages:
   condition: and(succeeded(), eq('${{ parameters.buildImage }}', true))
   jobs:
     - job: BuildJob
-      displayName: "Budowanie obrazu i wysłanie do ACR"
+      displayName: "Build Docker Image and Push to ACR"
       steps:
         - checkout: self
         - script: |
-            # Przekonwertuj nazwę obrazu na lowercase
+            # Convert image name to lowercase
             IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
-            echo "Using image tag: $IMAGE_TAG:latest"
+            echo "Using image tag: ${IMAGE_TAG}:latest"
             docker build -t ${IMAGE_TAG}:latest -f src/Dockerfile src/
-          displayName: "Budowanie obrazu Docker"
+          displayName: "Build Docker Image"
         - script: |
             docker login $(registryName) -u $(acrUsername) -p $(acrPassword)
-          displayName: "Logowanie do rejestru Docker"
+          displayName: "Docker Registry Login"
         - script: |
             IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
             echo "Pushing image: ${IMAGE_TAG}:latest"
@@ -78,22 +78,22 @@ stages:
   condition: succeeded()
   jobs:
     - job: DeployJob
-      displayName: "Wdrożenie aplikacji"
+      displayName: "Deploy Application"
       steps:
         - script: |
-            # Konwersja nazwy obrazu na lowercase
+            # Convert image name to lowercase
             IMAGE_TAG=$(echo "$(registryName)/$(Build.Repository.Name)" | tr '[:upper:]' '[:lower:]')
             echo "Using image tag: ${IMAGE_TAG}:latest"
-            echo "Wybrana operacja: ${{ parameters.operation }}"
+            echo "Selected operation: ${{ parameters.operation }}"
             if [ "${{ parameters.operation }}" = "Install" ]; then
-              echo "Instalowanie – uruchamiamy kontener..."
+              echo "Installing – starting container..."
               docker run -d -e D_TOKEN="$(d_token)" -p 32025:32025 ${IMAGE_TAG}:latest
             elif [ "${{ parameters.operation }}" = "Uninstall" ]; then
-              echo "Uninstall – zatrzymujemy i usuwamy kontener..."
+              echo "Uninstall – stopping and removing container..."
               docker stop myapp || true && docker rm myapp || true
             else
-              echo "Reinstall – zatrzymujemy, usuwamy i uruchamiamy nowy kontener..."
+              echo "Reinstall – stopping, removing, and starting a new container..."
               docker stop myapp || true && docker rm myapp || true
               docker run -d --name myapp -e D_TOKEN="$(d_token)" -p 32025:32025 ${IMAGE_TAG}:latest
             fi
-          displayName: "Wdrożenie aplikacji"
+          displayName: "Deploy Application"

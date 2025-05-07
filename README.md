@@ -22,7 +22,7 @@ CRC-Crypto Bot to bot Discord napisany w Pythonie, który integruje się z API B
 
 ## Wymagania
 
-- Python 3.8 lub nowszy
+- Python 3.13 lub nowszy
 - [discord.py](https://pypi.org/project/discord.py/)
 - [requests](https://pypi.org/project/requests/)
 - [matplotlib](https://pypi.org/project/matplotlib/)
@@ -127,41 +127,6 @@ CMD [ "python", "app.py" ]
    docker run -e D_TOKEN="twoj_token" -p 32025:32025 NAME:latest
    ```
 
-## Wdrożenie w Kubernetes z Helm
-
-Bot działa jako klient (inicjuje połączenia wychodzące), więc do wdrożenia wystarczy Deployment. Jeśli chcesz wymusić uruchomienie na konkretnym nodzie (np. `minipc1`), możesz użyć `nodeSelector` w manifeście Deployment.
-
-Przykładowy fragment `deployment.yaml`:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: crc-bot
-  labels:
-    app: crc-bot
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: crc-bot
-  template:
-    metadata:
-      labels:
-        app: crc-bot
-    spec:
-      containers:
-        - name: crc-bot
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: BOT_TOKEN
-              value: "{{ .Values.env.BOT_TOKEN }}"
-            - name: NASA_API_KEY
-              value: "{{ .Values.env.NASA_API_KEY }}"
-          ports:
-            - containerPort: {{ .Values.service.port }}
-```
 
 ## CI/CD – Azure Pipelines
 
@@ -206,7 +171,6 @@ Aby agent automatyczne uruchamiał się po restarcie VM:
 Przykładowy pipeline Azure definiuje etapy:
 - **Tests:** Tworzenie wirtualnego środowiska, instalacja zależności, uruchomienie testów i sprawdzenie kodu przy użyciu Black.
 - **Docker:** Budowanie i wypychanie obrazu Dockera.
-- **microk8s:** Wdrożenie Helm na klastrze.
 - **GithubSync:** Synchronizacja repozytorium.
 
 Fragment pipeline YAML (zobacz pełny kod w repozytorium):
@@ -216,7 +180,7 @@ Fragment pipeline YAML (zobacz pełny kod w repozytorium):
 trigger:
   branches:
     include:
-      - '*'
+      - main
   
 # Parametry, zmienne oraz etapy pipeline są zdefiniowane poniżej
 # [Pełna konfiguracja pipeline w pliku azure-pipelines.yml]
@@ -229,5 +193,6 @@ Jeśli chcesz przyczynić się do rozwoju projektu, proszę otwórz pull request
 
 ---
 
-Dzięki tym instrukcjom będziesz mógł lokalnie rozwijać, testować i wdrażać CRC-NasaBot zarówno w środowisku Docker, jak i Kubernetes, a także zautomatyzować procesy CI/CD przy użyciu Azure Pipelines.
+Dzięki tym instrukcjom będziesz mógł lokalnie rozwijać, testować i wdrażać crypto-bot'a w środowisku Docker, a także 
+zautomatyzować procesy CI/CD przy użyciu Azure Pipelines.
 ```
