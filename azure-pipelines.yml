@@ -33,15 +33,13 @@ stages:
       displayName: "Run tests and code formatting checks"
       steps:
         - checkout: self
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '3.13'
-          displayName: "Setting env Python 3.13"
         - script: |
+            python3 -m venv venv
+            source venv/bin/activate
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install pytest black
-          displayName: "Instalacja zależności"
+          displayName: "Install dependencies"
         - script: |
             black --check .
           displayName: "Run Black code style check"
