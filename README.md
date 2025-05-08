@@ -9,7 +9,18 @@ oraz [Frankfurter API](https://www.frankfurter.app/docs),
 oferując szereg komend przydatnych w codziennych finansach. Dodatkowo bot umożliwia dodawanie ulubionych wpisów i 
 obsługuje dwujęzyczność!
 
-## Funkcje
+## 📖 Spis Treści
+- [🚀 CRC CryptoBot](#-crc-cryptobot)
+- [🔗 Funkcje](#-funkcje)
+- [🔧 Wymagania](#-wymagania)
+- [⚙️ Instalacja i uruchomienie](#-instalacja-i-uruchomienie)
+- [🧪 Testy](#-testy)
+- [🐳 Docker](#-docker)
+- [🔄⚙ CI/CD Pipelines](#-cicd-pipelines)
+- [🛠 Kontrybucje](#-kontrybucje)
+- [📜 Licencja](#-licencja)
+
+## ![Funkcje](https://img.shields.io/badge/Features-Available-brightgreen?style=flat-square) Funkcje 🔗
 
 
 - **Generowanie wykresów:**  
@@ -38,7 +49,7 @@ obsługuje dwujęzyczność!
 - **Konfiguracja waluty:**  
   **Opis:** Komenda `!waluta` umożliwia ustawienie preferowanej waluty, w której bot przedstawia ceny kryptowalut, co jest szczególnie przydatne przy międzynarodowym użyciu.
 
-## Wymagania
+## ![Wymagania](https://img.shields.io/badge/Requirements-Python%203.13-important?style=flat-square) Wymagania 🔧
 
 - Python 3.13 lub nowszy
 - [discord.py](https://pypi.org/project/discord.py/)
@@ -46,7 +57,7 @@ obsługuje dwujęzyczność!
 - [matplotlib](https://pypi.org/project/matplotlib/)
 - Narzędzia do testów: pytest, black
 
-## Instalacja i Uruchomienie
+## ![Instalacja i uruchamianie](https://img.shields.io/badge/Setup-Installation-red?style=flat-square) Instalacja i Uruchomienie ⚙️
 
 1. **Klonowanie repozytorium**
 
@@ -87,9 +98,25 @@ obsługuje dwujęzyczność!
    python src/app.py
    ```
 
-## Testy
+## ![Tests](https://img.shields.io/badge/Tests-Passed-green?style=flat-square) Testy 🧪
 
-Testy jednostkowe zostały napisane przy użyciu modułu unittest oraz unittest.mock.
+Testy w CRC CryptoBocie mają na celu weryfikację, że kluczowe funkcje aplikacji działają poprawnie oraz że wprowadzone
+zmiany nie powodują regresji. W projekcie stosujemy podejście testów jednostkowych oraz integracyjnych przy użyciu 
+frameworków unittest, pytest, modułu unittest oraz unittest.mock.
+
+Testy jednostkowe są definiowane w plikach rozpoczynających się od test_ (lub w katalogu tests/). Każdy plik zawiera 
+zestaw testów, gdzie przy użyciu klas dziedziczących po unittest.TestCase definiujemy metody testowe.
+
+Testy integracyjne sprawdzają współdziałanie różnych modułów aplikacji. Na przykład:
+
+- **Połączenie z API:** 
+czy funkcje komunikujące się z Binance API właściwie przetwarzają dane i reagują na błędy.
+-  **Całościowe działanie komend:** 
+uruchomienie sekwencji funkcji, które razem odpowiadają za 
+wykonanie komendy bota, na przykład `!price` czy `!ulubione`.
+
+Oprócz testów funkcjonalnych, w pipeline znajduje się również krok sprawdzający styl kodu za pomocą narzędzia Black. 
+Dzięki temu mamy pewność, że kod jest spójny i czytelny, co ułatwia współpracę i utrzymanie projektu.
 
 ### Jak uruchamiać testy?
 
@@ -101,7 +128,7 @@ Testy jednostkowe zostały napisane przy użyciu modułu unittest oraz unittest.
   ```bash
   python -m unittest discover
 
-## Docker
+## ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker) Docker 🐳
 
 Aplikację można zbudować i uruchomić w kontenerze Docker. Przykładowy plik `Dockerfile`:
 
@@ -135,6 +162,10 @@ CMD [ "python", "app.py" ]
    ```bash
    docker build -t NAME:latest -f src/Dockerfile src/
    ```
+    `-f src/Dockerfile` – wskazuje lokalizację pliku Dockerfile.
+
+    `src/` – ustawia kontekst budowania (katalog, z którego kopiowane są pliki do obrazu).
+
 
 2. **Uruchomienie kontenera**
 
@@ -144,8 +175,19 @@ CMD [ "python", "app.py" ]
    docker run -e D_TOKEN="twoj_token" -p 32025:32025 NAME:latest
    ```
 
+    `-e D_TOKEN="twoj_token"` – przekazuje zmienną środowiskową z tokenem bota.
 
-## CI/CD – Azure Pipelines
+    `-p 32025:32025` – przekierowuje porty, umożliwiając dostęp do aplikacji.
+
+    `NAME:latest` – określa obraz, z którego kontener ma zostać uruchomiony.
+
+
+## ![CI/CD](https://img.shields.io/badge/CI/CD-Automated-aquamarine) CI/CD – Azure Pipelines 🔄
+
+
+CI/CD (Continuous Integration / Continuous Deployment) pozwala na automatyzację procesu budowania, 
+testowania i wdrażania aplikacji, dzięki czemu zmiany w kodzie mogą być szybko i niezawodnie integrowane oraz 
+dostarczane do środowiska produkcyjnego.
 
 Ze względu na ograniczoną równoległość na hostowanych agentach Azure DevOps, zdecydowano o ręcznym wdrożeniu 
 self-hosted agenta na maszynie wirtualnej (VM) w Azure. Aby zapewnić jego automatyczne działanie po restarcie maszyny, 
@@ -203,10 +245,21 @@ trigger:
 # [Pełna konfiguracja pipeline w pliku azure-pipelines.yml]
 ```
 
-## Kontrybucje
+## ![Contributing](https://img.shields.io/badge/Contributing-Welcome-brown) Konstrybucje 🛠
 
 Jeśli chcesz przyczynić się do rozwoju projektu, proszę otwórz pull request lub zgłoś issue w repozytorium GitHub.
 
+## ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square) License 📜
+
+Projekt jest udostępniany na warunkach MIT License.
+
+Co to oznacza?
+
+- Możesz swobodnie używać, modyfikować i dystrybuować kod.
+
+- Wymagana jest informacja o autorach projektu.
+
+- Nie ponosimy odpowiedzialności za ewentualne szkody wynikające z użycia oprogramowania.
 
 ---
 
